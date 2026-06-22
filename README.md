@@ -20,6 +20,7 @@ brew install stow
 # Install applications and tools
 brew install --cask ghostty aerospace  # Terminal emulator and window manager
 brew install zellij starship carapace  # Terminal workspace, prompt, and completions
+brew install direnv                    # Per-directory environment variables
 ```
 
 ### 2. Clone This Repository
@@ -40,7 +41,7 @@ See the [Deploying Configurations](#deploying-configurations) section below for 
 Each configuration package has its own README with detailed installation instructions:
 
 - **ghostty** - Requires Ghostty terminal emulator (`brew install --cask ghostty`)
-- **zsh** - Requires Zellij, Starship, Carapace, and Rust/Cargo
+- **zsh** - Requires Zellij, Starship, Carapace, direnv, and Rust/Cargo
 - **zellij** - Requires Zellij terminal workspace manager (`brew install zellij`)
 - **aerospace** - Requires AeroSpace window manager (`brew install --cask aerospace`)
 - **git** - No additional dependencies

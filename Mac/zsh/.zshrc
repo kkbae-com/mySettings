@@ -16,3 +16,6 @@ source <(carapace _carapace)
 
 # Enable vi mode
 bindkey -v
+
+# direnv
+eval "$(direnv hook zsh)"
