@@ -41,7 +41,9 @@ See the [Deploying Configurations](#deploying-configurations) section below for 
 Each configuration package has its own README with detailed installation instructions:
 
 - **ghostty** - Requires Ghostty terminal emulator (`brew install --cask ghostty`)
-- **zsh** - Requires Zellij, Starship, Carapace, direnv, and Rust/Cargo
+- **zsh** - Requires Zellij, Starship, Carapace, direnv, Rust/Cargo, and `postgresql`
+  (`brew install postgresql`) - it's keg-only, so `psql`/`pg_restore`/etc. aren't linked
+  onto `PATH` by default; `.zshenv` adds `$(brew --prefix postgresql)/bin` explicitly
 - **zellij** - Requires Zellij terminal workspace manager (`brew install zellij`)
 - **aerospace** - Requires AeroSpace window manager (`brew install --cask aerospace`)
 - **git** - No additional dependencies
