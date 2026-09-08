@@ -1,0 +1,5 @@
+# Copy this file to ~/.zshrc.local and add machine-specific config here.
+# ~/.zshrc.local is untracked and sourced automatically by .zshrc - it never
+# gets stowed/symlinked, so it's safe to put machine-specific paths in it.
+#
+#   cp Mac/zsh/.zshrc.local.template ~/.zshrc.local

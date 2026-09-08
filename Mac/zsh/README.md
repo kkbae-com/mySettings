@@ -7,6 +7,7 @@
 - `.zshrc` - Zsh shell configuration and initialization
 - `.zshenv` - Environment variables loaded before .zshrc
 - `.zshenv.local.template` - Template for machine-local secrets; not stowed, copy it manually
+- `.zshrc.local.template` - Template for machine-local `.zshrc` additions (e.g. Docker Desktop completions); not stowed, copy it manually
 
 ## Features
 
@@ -24,10 +25,13 @@
    stow -t ~ zsh
    ```
 
-2. Set up machine-local secrets:
+2. Set up machine-local files:
    ```bash
    cp zsh/.zshenv.local.template ~/.zshenv.local
    # edit ~/.zshenv.local and fill in real values
+
+   cp zsh/.zshrc.local.template ~/.zshrc.local
+   # edit ~/.zshrc.local and add anything specific to this machine
    ```
 
 3. Restart your terminal or source the config:
