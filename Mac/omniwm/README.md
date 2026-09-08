@@ -17,15 +17,15 @@
    ```
    Installs `OmniWM.app` plus the `omniwmctl` CLI.
 
-2. In System Settings -> Desktop & Dock, turn on **"Displays have separate Spaces"**, then log out and back in - required before first launch.
-
-3. Launch `OmniWM.app` once. Grant **Accessibility** and **Input Monitoring** permissions when prompted. Screen Recording is optional, only needed for the Overview thumbnails feature.
-
-4. Keep AeroSpace from fighting OmniWM for window control - only one tiling WM should be actively running at a time:
+2. Keep AeroSpace from fighting OmniWM for window control - only one tiling WM should be actively running at a time, and it shouldn't be mid-Space-management across the logout/login in the next step:
    ```bash
    aerospace quit   # or: killall AeroSpace
    ```
    Whichever `aerospace-1monitor`/`aerospace-2monitor` package is currently stowed has `start-at-login = true`; flip it to `false` while trialing OmniWM so AeroSpace doesn't relaunch itself, then flip it back if you return to AeroSpace.
+
+3. In System Settings -> Desktop & Dock, turn on **"Displays have separate Spaces"**, then log out and back in - required before first launch.
+
+4. Launch `OmniWM.app` once. Grant **Accessibility** and **Input Monitoring** permissions when prompted. Screen Recording is optional, only needed for the Overview thumbnails feature.
 
 5. Let OmniWM generate its default config at `~/.config/omniwm/settings.toml`, then tune it to taste.
 
