@@ -15,3 +15,9 @@ export MONEYBAE_DATABASE_URL="postgres://mrcunninghamz@localhost/money_bae"
 
 # Carapace completion bridges
 export CARAPACE_BRIDGES='zsh,bash'
+
+# libpq client tools (keg-only via Homebrew)
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+
+# Machine-local secrets - not tracked, see .zshenv.local.template
+[ -f "$HOME/.zshenv.local" ] && source "$HOME/.zshenv.local"

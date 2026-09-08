@@ -6,6 +6,7 @@
 
 - `.zshrc` - Zsh shell configuration and initialization
 - `.zshenv` - Environment variables loaded before .zshrc
+- `.zshenv.local.template` - Template for machine-local secrets; not stowed, copy it manually
 
 ## Features
 
@@ -23,7 +24,13 @@
    stow -t ~ zsh
    ```
 
-2. Restart your terminal or source the config:
+2. Set up machine-local secrets:
+   ```bash
+   cp zsh/.zshenv.local.template ~/.zshenv.local
+   # edit ~/.zshenv.local and fill in real values
+   ```
+
+3. Restart your terminal or source the config:
    ```bash
    source ~/.zshrc
    ```
@@ -49,6 +56,7 @@ The following tools are used in this zsh configuration and must be installed:
 
 - `MONEYBAE_DATABASE_URL` - Database connection string (project-specific)
 - `CARAPACE_BRIDGES` - Enables zsh and bash completion bridges
+- `TF_VAR_money_bae_db_admin_password` - Secret; lives only in untracked `~/.zshenv.local` (see `.zshenv.local.template`)
 - Rust environment loaded via `~/.cargo/env`
 
 ## Notes
