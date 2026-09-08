@@ -1,0 +1,7 @@
+# Copy this file to ~/.zshenv.local and fill in real values.
+# ~/.zshenv.local is untracked and sourced automatically by .zshenv - it never
+# gets stowed/symlinked, so it's safe to put real secrets in it.
+#
+#   cp Mac/zsh/.zshenv.local.template ~/.zshenv.local
+
+export TF_VAR_money_bae_db_admin_password="REPLACE_ME"
