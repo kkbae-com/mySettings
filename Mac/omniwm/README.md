@@ -7,6 +7,8 @@
 ## Files
 
 - `.config/omniwm/settings.toml` - Main configuration file for OmniWM
+- `.config/omniwm/sidecar-workspace-fixup.sh` - Nudges workspaces onto the right monitor when the Sidecar iPad connects (see "Sidecar workspace fixup" below)
+- `Library/LaunchAgents/com.mysettings.omniwm-sidecar-watch.plist` - Keeps the above script running on every display change
 
 ## Features
 
@@ -62,6 +64,22 @@ stow -t ~ aerospace-1monitor    # or aerospace-2monitor
 aerospace reload-config
 ```
 Set `start-at-login = true` back in the aerospace config once you're back on it full time.
+
+## Sidecar workspace fixup
+
+`settings.toml` assigns workspaces 1-5 to `main` and 6-9 to `secondary` — the correct split for the HP Z27 setup. OmniWM's static config can't express "secondary, unless the secondary is the Sidecar, in which case main" (only `main`, `secondary`, or a pin to one specific display), so when the Sidecar iPad is connected instead, that same config would put 6-9 on it too instead of the built-in display.
+
+`sidecar-workspace-fixup.sh` works around this: whenever OmniWM fires a `display-changed` IPC event, it checks (`omniwmctl query displays`) whether a Sidecar display is present, and if so nudges workspaces 1-5 onto it and 6-9 back onto the built-in display, using the same temporary runtime override as the in-app "Move Workspace to Monitor" action. It's a no-op when the Sidecar isn't connected. The `left`/`right` directions it uses assume the Sidecar sits physically left of the built-in display in the current routing arrangement - re-check with `omniwmctl query displays --format json` (`frame.x`) if that ever changes.
+
+This requires `ipcEnabled = true` in `settings.toml` (already set) so `omniwmctl` can talk to the running app, and the LaunchAgent to keep a `omniwmctl watch display-changed --reconnect --exec ...` process alive across logins:
+
+```bash
+cd ~/Projects/mySettings/Mac
+stow -R -t ~ omniwm   # symlinks the script and plist into place
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.mysettings.omniwm-sidecar-watch.plist
+```
+
+To stop it: `launchctl bootout gui/$(id -u)/com.mysettings.omniwm-sidecar-watch`. Logs land in `/tmp/omniwm-sidecar-watch.{out,err}.log`.
 
 ## Configuration Highlights
 
