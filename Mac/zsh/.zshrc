@@ -19,3 +19,6 @@ bindkey -v
 
 # direnv
 eval "$(direnv hook zsh)"
+
+# Machine-local additions - not tracked, see .zshrc.local.template
+[ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"

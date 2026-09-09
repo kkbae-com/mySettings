@@ -59,6 +59,33 @@ This repository serves as a version-controlled backup and reference for:
 - Shell configurations
 - Utility preferences
 
+## Machine-Specific vs. Shared Configuration
+
+This repo is shared across multiple machines. Tracked config files must stay
+identical for everyone who stows this repo - so anything that only applies to
+one machine (an install path, a local secret, a one-off tweak) must never be
+committed directly into a tracked file.
+
+The convention: a tracked file sources an untracked, machine-local
+counterpart if one exists, e.g. in `.zshenv`:
+
+```bash
+[ -f "$HOME/.zshenv.local" ] && source "$HOME/.zshenv.local"
+```
+
+- The real `~/.foo.local` file lives only in `$HOME` - it is never tracked
+  and never stowed/symlinked, so a `git pull` on another machine can't
+  overwrite it and it can't leak machine-specific values into the shared repo.
+- A `<file>.local.template` (e.g. `.zshenv.local.template`,
+  `.zshrc.local.template`) is what actually gets tracked and stowed - it
+  documents the hook and gives new machines a starting point:
+  ```bash
+  cp Mac/zsh/.zshenv.local.template ~/.zshenv.local
+  ```
+- Before adding something to a tracked file, ask whether every machine
+  running this repo should get it. If not, it belongs in the local file, not
+  the template.
+
 ## Structure
 
 Configuration files are organized by operating system, with each tool/application in its own stow package:
