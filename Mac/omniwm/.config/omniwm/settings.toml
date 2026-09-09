@@ -1,9 +1,26 @@
 monitorBarOverrides = []
-monitorDwindleOverrides = []
 monitorGapOverrides = []
 monitorNiriOverrides = []
 monitorOrientationOverrides = []
 schemaVersion = 3
+
+[[monitorDwindleOverrides]]
+id = "36321AC9-E6A0-41F8-8541-41A2BB333C1B"
+monitorName = "Vervint M2 Macbook Pro Display"
+monitorDisplayUUID = "37D8832A-2D66-02CA-B9F7-8F30A301B230"
+singleWindowFit = "1968x1272"
+
+[[monitorDwindleOverrides]]
+id = "E3E61B9D-E874-4346-9931-70EC791CEBF7"
+monitorName = "HP Z27"
+monitorDisplayUUID = "29C2055D-5F0F-4083-9E08-2B13363F11ED"
+singleWindowFit = "2880x1620"
+
+[[monitorDwindleOverrides]]
+id = "5892C4C1-55CA-40A3-AC6A-F68A9AFB93C3"
+monitorName = "Sidecar Display (AirPlay)"
+monitorDisplayUUID = "20C899DA-E030-4F52-9323-EB77EF7F9E08"
+singleWindowFit = "1193x894"
 
 [appearance]
 mode = "dark"
@@ -27,7 +44,7 @@ maxTotalBytes = 67108864
 [dwindle]
 defaultSplitRatio = 1.0
 moveToRootStable = true
-singleWindowFit = "fill"
+singleWindowFit = "1440x810"
 smartSplit = false
 splitWidthMultiplier = 1.0
 useGlobalGaps = true
@@ -56,7 +73,7 @@ animationsEnabled = true
 defaultLayoutType = "dwindle"
 hotkeysEnabled = true
 hyperKeyModifiers = "Control+Option+Shift+Command"
-ipcEnabled = false
+ipcEnabled = true
 preventSleepEnabled = false
 systemHyperTrigger = "None"
 updateChecksEnabled = true
@@ -90,7 +107,7 @@ centerFocusedColumn = "never"
 containerPrimarySpanPresets = [0.3333333333333333, 0.5, 0.6666666666666666]
 defaultContainerPrimarySpan = 0.5
 infiniteLoop = false
-singleWindowFit = "fill"
+singleWindowFit = "1440x810"
 visibleContainerCount = 2
 
 [overview]
@@ -135,8 +152,22 @@ position = "center"
 widthPercent = 50.0
 
 [routing]
-arrangements = []
 mode = "macOS"
+
+[[routing.arrangements]]
+id = "EA3C7786-6C25-411B-B3B6-4A470D623A6F"
+
+[[routing.arrangements.monitors]]
+gridColumn = 0
+gridRow = 0
+monitorDisplayUUID = "20C899DA-E030-4F52-9323-EB77EF7F9E08"
+monitorName = "Sidecar Display (AirPlay)"
+
+[[routing.arrangements.monitors]]
+gridColumn = 1
+gridRow = 0
+monitorDisplayUUID = "37D8832A-2D66-02CA-B9F7-8F30A301B230"
+monitorName = "Vervint M2 Macbook Pro Display"
 
 [scratchpads]
 
@@ -477,27 +508,27 @@ binding = "Control+Option+Tab"
 id = "workspaceBackAndForth"
 
 [[hotkeys]]
-binding = "Unassigned"
+binding = "Option+Right Arrow"
 id = "switchWorkspace.next"
 
 [[hotkeys]]
-binding = "Unassigned"
+binding = "Option+Left Arrow"
 id = "switchWorkspace.previous"
 
 [[hotkeys]]
-binding = "Option+Left Arrow"
+binding = "Option+H"
 id = "focus.left"
 
 [[hotkeys]]
-binding = "Option+Down Arrow"
+binding = "Option+J"
 id = "focus.down"
 
 [[hotkeys]]
-binding = "Option+Up Arrow"
+binding = "Option+K"
 id = "focus.up"
 
 [[hotkeys]]
-binding = "Option+Right Arrow"
+binding = "Option+L"
 id = "focus.right"
 
 [[hotkeys]]
@@ -545,11 +576,11 @@ binding = "Unassigned"
 id = "centerVisibleColumns"
 
 [[hotkeys]]
-binding = "Control+Option+Shift+Up Arrow"
+binding = "Option+Shift+Right Arrow"
 id = "moveWindowToWorkspaceUp"
 
 [[hotkeys]]
-binding = "Control+Option+Shift+Down Arrow"
+binding = "Option+Shift+Left Arrow"
 id = "moveWindowToWorkspaceDown"
 
 [[hotkeys]]
@@ -597,19 +628,19 @@ binding = "Unassigned"
 id = "moveColumnToWorkspace.8"
 
 [[hotkeys]]
-binding = "Option+Shift+Left Arrow"
+binding = "Option+Shift+H"
 id = "move.left"
 
 [[hotkeys]]
-binding = "Option+Shift+Down Arrow"
+binding = "Option+Shift+J"
 id = "move.down"
 
 [[hotkeys]]
-binding = "Option+Shift+Up Arrow"
+binding = "Option+Shift+K"
 id = "move.up"
 
 [[hotkeys]]
-binding = "Option+Shift+Right Arrow"
+binding = "Option+Shift+L"
 id = "move.right"
 
 [[hotkeys]]
@@ -989,11 +1020,11 @@ binding = "Option+Grave"
 id = "toggleQuakeTerminal"
 
 [[hotkeys]]
-binding = "Option+Shift+L"
+binding = "Option+Shift+O"
 id = "toggleWorkspaceLayout"
 
 [[hotkeys]]
-binding = "Option+Shift+O"
+binding = "Option+Up Arrow"
 id = "toggleOverview"
 
 [[hotkeys]]
@@ -1062,7 +1093,7 @@ layoutType = "dwindle"
 name = "8"
 
 [workspaces.monitorAssignment]
-type = "main"
+type = "secondary"
 
 [[workspaces]]
 id = "8D4D711C-2B2F-4FEC-86BF-FA952037738A"
@@ -1070,4 +1101,4 @@ layoutType = "dwindle"
 name = "9"
 
 [workspaces.monitorAssignment]
-type = "main"
+type = "secondary"
