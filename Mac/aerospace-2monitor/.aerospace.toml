@@ -32,6 +32,15 @@ default-root-container-orientation = 'auto'
 # Fallback value (if you omit the key): on-focused-monitor-changed = []
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
+# On every new window: grid-layout.sh first undoes any leftover floating
+# window in its now-multi-window workspace (pairs with the alt-shift-c
+# center-float.sh binding below, via restore-tiling.sh), then applies the
+# 2x2 grid placement rule for windows 3-4 and the overflow-to-sibling-
+# workspace rule for window 5+.
+on-window-detected = [
+    { if = 'true', check-further-callbacks = true, run = 'exec-and-forget $HOME/.config/aerospace/grid-layout.sh' },
+]
+
 # You can effectively turn off macOS "Hide application" (cmd-h) feature by toggling this flag
 # Useful if you don't use this macOS feature, but accidentally hit cmd-h or cmd-alt-h key
 # Also see: https://nikitabobko.github.io/AeroSpace/goodies#disable-hide-app
@@ -144,6 +153,11 @@ automatically-unhide-macos-hidden-apps = false
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#mode
     alt-r = 'mode service'
+
+    # Float + center the focused window at 33% of its screen, but only when
+    # it's the sole window in the workspace (no-op otherwise, since AeroSpace
+    # has no window-close event to react to automatically)
+    alt-shift-c = 'exec-and-forget $HOME/.config/aerospace/center-float.sh'
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
