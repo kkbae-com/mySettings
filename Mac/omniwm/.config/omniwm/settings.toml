@@ -940,19 +940,19 @@ binding = "Unassigned"
 id = "swapSplit"
 
 [[hotkeys]]
-binding = "Unassigned"
+binding = "Option+Equal"
 id = "resizeGrow.horizontal"
 
 [[hotkeys]]
-binding = "Unassigned"
+binding = "Option+Shift+Equal"
 id = "resizeGrow.vertical"
 
 [[hotkeys]]
-binding = "Unassigned"
+binding = "Option+Minus"
 id = "resizeShrink.horizontal"
 
 [[hotkeys]]
-binding = "Unassigned"
+binding = "Option+Shift+Minus"
 id = "resizeShrink.vertical"
 
 [[hotkeys]]
