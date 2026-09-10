@@ -1,0 +1,68 @@
+#!/usr/bin/swift
+// Prints each active display's CGDirectDisplayID, CGDisplayCreateUUIDFromDisplayID
+// UUID, and logical (points) resolution - the values OmniWM's settings.toml
+// needs for a [[monitorDwindleOverrides]] entry's `id`/`monitorDisplayUUID`
+// and `singleWindowFit` fields. `monitorName` still has to come from System
+// Settings > Displays, CoreGraphics doesn't expose a display's marketing name.
+//
+// Usage:
+//   omniwm-display-info            # all active displays
+//   omniwm-display-info --main     # only the main display
+//   omniwm-display-info --json     # JSON array instead of text
+
+import CoreGraphics
+import Foundation
+
+@_silgen_name("CGDisplayCreateUUIDFromDisplayID")
+func CGDisplayCreateUUIDFromDisplayID(_ display: CGDirectDisplayID) -> Unmanaged<CFUUID>?
+
+struct DisplayInfo {
+    let id: CGDirectDisplayID
+    let isMain: Bool
+    let width: Int
+    let height: Int
+    let uuid: String
+}
+
+func activeDisplays() -> [DisplayInfo] {
+    var count: UInt32 = 0
+    CGGetActiveDisplayList(0, nil, &count)
+    var ids = [CGDirectDisplayID](repeating: 0, count: Int(count))
+    CGGetActiveDisplayList(count, &ids, &count)
+
+    return ids.compactMap { id in
+        guard let uuidRef = CGDisplayCreateUUIDFromDisplayID(id) else { return nil }
+        let uuidString = CFUUIDCreateString(nil, uuidRef.takeRetainedValue())! as String
+        return DisplayInfo(
+            id: id,
+            isMain: CGDisplayIsMain(id) != 0,
+            width: CGDisplayPixelsWide(id),
+            height: CGDisplayPixelsHigh(id),
+            uuid: uuidString
+        )
+    }
+}
+
+let args = Set(CommandLine.arguments.dropFirst())
+var displays = activeDisplays()
+if args.contains("--main") {
+    displays = displays.filter { $0.isMain }
+}
+
+if args.contains("--json") {
+    let payload = displays.map { d -> [String: Any] in
+        [
+            "id": d.id,
+            "main": d.isMain,
+            "width": d.width,
+            "height": d.height,
+            "uuid": d.uuid,
+        ]
+    }
+    let data = try! JSONSerialization.data(withJSONObject: payload, options: [.prettyPrinted])
+    print(String(data: data, encoding: .utf8)!)
+} else {
+    for d in displays {
+        print("id=\(d.id) main=\(d.isMain) points=\(d.width)x\(d.height) uuid=\(d.uuid)")
+    }
+}

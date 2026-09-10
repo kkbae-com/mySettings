@@ -9,6 +9,7 @@
 - `.config/omniwm/settings.toml` - Main configuration file for OmniWM
 - `.config/omniwm/sidecar-workspace-fixup.sh` - Nudges workspaces onto the right monitor when the Sidecar iPad connects (see "Sidecar workspace fixup" below)
 - `Library/LaunchAgents/com.mysettings.omniwm-sidecar-watch.plist` - Keeps the above script running on every display change
+- `bin/omniwm-display-info` - Prints each active display's UUID and points resolution, for adding new `[[monitorDwindleOverrides]]` entries (see "Adding a monitor override" below)
 
 ## Features
 
@@ -80,6 +81,20 @@ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.mysettings.omniwm-si
 ```
 
 To stop it: `launchctl bootout gui/$(id -u)/com.mysettings.omniwm-sidecar-watch`. Logs land in `/tmp/omniwm-sidecar-watch.{out,err}.log`.
+
+## Adding a monitor override
+
+Each `[[monitorDwindleOverrides]]` entry in `settings.toml` pins a `singleWindowFit` size to a specific display via `monitorDisplayUUID`. To add one for a new display:
+
+```bash
+Mac/omniwm/bin/omniwm-display-info          # all active displays, text output
+Mac/omniwm/bin/omniwm-display-info --main   # only the main display
+Mac/omniwm/bin/omniwm-display-info --json   # JSON output
+```
+
+This prints the display's `id` (CGDirectDisplayID), `uuid` (what goes in `monitorDisplayUUID`), and its logical `points` resolution - the basis for picking a `singleWindowFit` value (existing entries trim a small margin off the full points size, e.g. width/height minus ~60-80px). `monitorName` isn't obtainable this way (CoreGraphics doesn't expose a display's marketing name); set it to whatever label you want to keep the entries readable.
+
+**Caveat:** the UUID `CGDisplayCreateUUIDFromDisplayID` returns for a built-in laptop display is derived from its EDID, which can be identical across separate machines of the same model/panel - it's not guaranteed to be unique per physical device. If a new machine's built-in display reports the same UUID as an existing override entry, don't add a duplicate; decide whether to reuse/rename the existing entry instead.
 
 ## Configuration Highlights
 

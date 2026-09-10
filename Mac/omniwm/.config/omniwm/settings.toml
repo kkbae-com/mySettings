@@ -6,7 +6,7 @@ schemaVersion = 3
 
 [[monitorDwindleOverrides]]
 id = "36321AC9-E6A0-41F8-8541-41A2BB333C1B"
-monitorName = "Vervint M2 Macbook Pro Display"
+monitorName = "Macbook"
 monitorDisplayUUID = "37D8832A-2D66-02CA-B9F7-8F30A301B230"
 singleWindowFit = "1968x1272"
 
@@ -167,7 +167,7 @@ monitorName = "Sidecar Display (AirPlay)"
 gridColumn = 1
 gridRow = 0
 monitorDisplayUUID = "37D8832A-2D66-02CA-B9F7-8F30A301B230"
-monitorName = "Vervint M2 Macbook Pro Display"
+monitorName = "Macbook"
 
 [scratchpads]
 
