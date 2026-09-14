@@ -21,8 +21,8 @@
 
 1. Deploy configuration:
    ```bash
-   cd ~/Projects/mySettings/Mac
-   stow -t ~ zsh
+   cd ~/Documents/Projects/kkbae/mySettings/Mac
+   stow --no-folding -t ~ zsh
    ```
 
 2. Set up machine-local files:
@@ -43,7 +43,8 @@
 
 The following tools are used in this zsh configuration and must be installed:
 
-- **[Zellij](https://zellij.dev/)** - Terminal workspace manager
+- **[Zellij](https://zellij.dev/)** - Terminal workspace manager. Optional - the
+  shell no longer starts it automatically, so zsh works fine without it installed
 - **[Starship](https://starship.rs/)** - Cross-shell prompt
 - **[Carapace](https://carapace.sh/)** - Multi-shell completion generator
 - **[Rust/Cargo](https://www.rust-lang.org/)** - Rust toolchain (cargo environment loaded in `.zshenv`)
@@ -52,7 +53,9 @@ The following tools are used in this zsh configuration and must be installed:
 
 - **Autocompletion:** Enabled with `compinit`
 - **PATH:** Includes `~/bin`, `~/.local/bin`, and system paths
-- **Auto-start:** Zellij workspace manager launches automatically
+- **Zellij:** started on demand (`zellij`), *not* auto-started per shell - the
+  auto-start line is commented out in `.zshrc`; see
+  [Mac/zellij/README.md](../zellij/README.md) to turn it on
 - **Prompt:** Starship theme for modern, informative prompt
 - **Completions:** Carapace with zsh and bash bridges
 

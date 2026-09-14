@@ -22,8 +22,8 @@
 
 2. Deploy configuration:
    ```bash
-   cd ~/Projects/mySettings/Mac
-   stow -t ~ ghostty
+   cd ~/Documents/Projects/kkbae/mySettings/Mac
+   stow --no-folding -t ~ ghostty
    ```
 
 3. Restart Ghostty or reload config (Cmd + Shift + ,)

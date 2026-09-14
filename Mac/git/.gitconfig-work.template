@@ -1,0 +1,17 @@
+# Copy this file to ~/.gitconfig-work and fill in the work identity.
+# ~/.gitconfig-work is untracked and never stowed/symlinked, so a `git pull` on
+# another machine can't overwrite it and a work email can't leak into this repo.
+#
+#   cp Mac/git/.gitconfig-work.template ~/.gitconfig-work
+#
+# It's pulled in by the [includeIf "gitdir:~/Documents/Projects/vervint/"] block
+# in .gitconfig, so it applies ONLY to repos under that directory. Clone work
+# repos there and the work identity is used automatically; everything else falls
+# back to the default identity in .gitconfig.
+#
+# Verify which identity a repo resolves to:
+#   git -C <repo> config user.email
+
+[user]
+	email = REPLACE_ME@vervint.com
+	name = Karl Merecido
