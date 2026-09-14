@@ -55,5 +55,5 @@
 font-family = "MesloLGL Nerd Font"
 
 # key binds
-keybind = global:super+grave_accent=toggle_quick_terminal
+# keybind = global:super+grave_accent=toggle_quick_terminal # Omniwm has a quake console that we will use.
 keybind = global:alt+super+enter=new_window
