@@ -18,10 +18,16 @@ A centralized repository for storing operating system configurations and environ
 brew install stow
 
 # Install applications and tools
-brew install --cask ghostty aerospace  # Terminal emulator and window manager
+brew install --cask ghostty omniwm     # Terminal emulator and window manager
 brew install zellij starship carapace  # Terminal workspace, prompt, and completions
 brew install direnv                    # Per-directory environment variables
 ```
+
+**Window manager:** OmniWM replaced AeroSpace as the window manager for this repo.
+The `aerospace-1monitor`/`aerospace-2monitor` packages are still tracked as a
+fallback - install `brew install --cask aerospace` instead of `omniwm` if you're
+going that route. OmniWM requires macOS 26 (Tahoe) or later on Apple Silicon;
+AeroSpace remains the option on Intel or older macOS.
 
 ### 2. Clone This Repository
 
@@ -45,7 +51,14 @@ Each configuration package has its own README with detailed installation instruc
   (`brew install postgresql`) - it's keg-only, so `psql`/`pg_restore`/etc. aren't linked
   onto `PATH` by default; `.zshenv` adds `$(brew --prefix postgresql)/bin` explicitly
 - **zellij** - Requires Zellij terminal workspace manager (`brew install zellij`)
-- **aerospace** - Requires AeroSpace window manager (`brew install --cask aerospace`)
+- **omniwm** - Requires OmniWM window manager (`brew install --cask omniwm`), macOS 26+
+  on Apple Silicon. Has extra first-run setup (separate Spaces per display, Accessibility
+  and Input Monitoring permissions, removing the default generated config before stowing)
+  and an optional Sidecar LaunchAgent - see [Mac/omniwm/README.md](./Mac/omniwm/README.md)
+  before deploying
+- **aerospace-1monitor** / **aerospace-2monitor** - Fallback window manager, requires
+  AeroSpace (`brew install --cask aerospace`). Mutually exclusive with each other and
+  with **omniwm**
 - **git** - No additional dependencies
 
 ## Purpose
@@ -124,41 +137,62 @@ Mac/
    stow -t ~ zsh         # Creates ~/.zshrc symlink
    stow -t ~ git         # Creates ~/.gitconfig symlink
    ```
-4. Deploy all packages:
+4. Deploy every package *except* the window managers (see the next section - the
+   window manager packages are mutually exclusive, so `*/` is not safe here):
    ```bash
-   stow -t ~ */
+   stow -t ~ ghostty git zellij zsh
    ```
 
 **Note:** The `-t ~` flag explicitly targets your home directory. Without it, stow creates symlinks in the parent directory of where you run it.
 
 ### Managing Multiple Configurations for the Same Tool
 
-Some tools may have multiple configuration packages for different setups (e.g., different monitor configurations). In these cases:
+Some tools have multiple configuration packages for different setups. The window
+manager is the live example - three mutually exclusive packages:
+
+| Package | Use |
+| --- | --- |
+| `omniwm` | Current default. macOS 26+ on Apple Silicon |
+| `aerospace-1monitor` | Fallback, single monitor |
+| `aerospace-2monitor` | Fallback, dual monitor |
 
 1. **Only deploy ONE variant at a time**
 2. **Remove the current variant before deploying another**
-
-Example with AeroSpace window manager (1-monitor vs 2-monitor setups):
+3. **Quit the running window manager before switching** - two tiling WMs running at
+   once will fight over window control
 
 ```bash
-# For single monitor setup
-stow -t ~ aerospace-1monitor
+# Deploy the current default
+stow -t ~ omniwm
 
-# To switch to dual monitor setup:
-# First, remove the current configuration
-stow -D -t ~ aerospace-1monitor
+# To switch to the AeroSpace fallback:
+# First quit OmniWM (menu bar icon, or via omniwmctl), then unstow it
+stow -D -t ~ omniwm
 
-# Then deploy the dual monitor configuration
-stow -t ~ aerospace-2monitor
+# Then deploy one AeroSpace variant
+stow -t ~ aerospace-1monitor    # or aerospace-2monitor
+aerospace reload-config
 ```
 
-**Important:** Never run `stow -t ~ */` if you have multiple variants of the same tool, as this will create conflicts. Deploy packages selectively instead.
+`omniwm` and the `aerospace-*` packages don't write to the same paths, so stow
+itself won't complain about deploying both - but the two apps will conflict at
+runtime. The two `aerospace-*` variants *do* both provide `.aerospace.toml` and
+will collide in stow.
+
+OmniWM has first-run setup beyond stowing (separate Spaces per display,
+Accessibility/Input Monitoring permissions, clearing the default generated config)
+and `start-at-login` needs flipping on the AeroSpace side when you migrate - see
+[Mac/omniwm/README.md](./Mac/omniwm/README.md) for the full sequence in both
+directions.
+
+**Important:** Never run `stow -t ~ */` in `Mac/` - it will try to deploy all three
+window manager packages at once. Deploy packages selectively instead.
 
 ### Removing Configurations
 
 ```bash
 cd ~/Projects/mySettings/Mac
-stow -D -t ~ aerospace-1monitor    # Removes aerospace symlinks
+stow -D -t ~ omniwm                # Removes omniwm symlinks
 stow -D -t ~ zsh                   # Removes ~/.zshrc symlink
 ```
 
