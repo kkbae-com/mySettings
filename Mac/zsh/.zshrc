@@ -31,5 +31,12 @@ bindkey -v
 # direnv
 eval "$(direnv hook zsh)"
 
+# Node via nvm - installed with nvm's own install script into ~/.nvm, NOT
+# Homebrew. nvm is a shell function rather than a binary, so it has to be
+# sourced here in .zshrc; it can't be a plain PATH export in .zshenv.
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+
 # Machine-local additions - not tracked, see .zshrc.local.template
 [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"

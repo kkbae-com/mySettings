@@ -24,7 +24,7 @@
 2. Deploy configuration:
    ```bash
    cd ~/Documents/Projects/kkbae/mySettings/Mac
-   stow -t ~ zellij
+   stow --no-folding -t ~ zellij
    ```
 
 3. Restart Zellij or start a new session

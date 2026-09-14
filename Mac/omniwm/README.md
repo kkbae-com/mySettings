@@ -49,7 +49,7 @@
    ```bash
    cd ~/Documents/Projects/kkbae/mySettings/Mac
    rm ~/.config/omniwm/settings.toml   # avoids a stow "existing target" conflict
-   stow -t ~ omniwm
+   stow --no-folding -t ~ omniwm
    ```
 
 6. **Reload OmniWM** (quit and relaunch, or via `omniwmctl` - check `omniwmctl --help` for a reload subcommand) so it picks up the stowed config.
@@ -61,7 +61,7 @@ cd ~/Documents/Projects/kkbae/mySettings/Mac
 stow -D -t ~ omniwm            # if omniwm's config was stowed
 # quit OmniWM from its menu bar icon, or via omniwmctl - check `omniwmctl --help`
 # for the exact quit/reload subcommand, upstream docs don't pin it down as of this writing
-stow -t ~ aerospace-1monitor    # or aerospace-2monitor
+stow --no-folding -t ~ aerospace-1monitor    # or aerospace-2monitor
 aerospace reload-config
 ```
 Set `start-at-login = true` back in the aerospace config once you're back on it full time.

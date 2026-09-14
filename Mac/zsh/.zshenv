@@ -4,8 +4,26 @@
 # Path configuration
 export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
-# Add .NET Core SDK tools
-export PATH="$PATH:$HOME/.dotnet/tools"
+# .NET SDK - installed with Microsoft's dotnet-install.sh into ~/.dotnet, NOT
+# Homebrew. DOTNET_ROOT is required when the SDK lives outside the system
+# location, otherwise `dotnet` can't find its shared runtimes. ~/.dotnet holds
+# the `dotnet` binary itself; ~/.dotnet/tools holds `dotnet tool install -g`
+# binaries, which go last so they can't shadow the SDK.
+if [ -d "$HOME/.dotnet" ]; then
+  export DOTNET_ROOT="$HOME/.dotnet"
+  export PATH="$DOTNET_ROOT:$PATH:$DOTNET_ROOT/tools"
+fi
+
+# Go - installed from the official go.dev tarball into ~/.local/go, NOT Homebrew.
+# GOROOT is set because the tarball isn't at Go's default /usr/local/go.
+if [ -d "$HOME/.local/go" ]; then
+  export GOROOT="$HOME/.local/go"
+  export PATH="$GOROOT/bin:$PATH"
+fi
+
+# Go workspace: module cache and `go install` binaries
+export GOPATH="$HOME/go"
+[ -d "$GOPATH/bin" ] && export PATH="$GOPATH/bin:$PATH"
 
 # Carapace completion bridges
 export CARAPACE_BRIDGES='zsh,bash'

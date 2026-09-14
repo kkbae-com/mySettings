@@ -2,12 +2,44 @@
 
 A centralized repository for storing operating system configurations and environment setups across different platforms, managed with GNU Stow.
 
-## Prerequisites
+## Required Tools & Languages
 
-- **GNU Stow** - Required for symlink management
-  - macOS: `brew install stow`
-  - Linux: `sudo apt install stow` or `sudo yum install stow`
-  - Windows: Use WSL or install via Chocolatey: `choco install stow`
+**GNU Stow** is the only hard prerequisite - it's what deploys everything else.
+
+- macOS: `brew install stow`
+- Linux: `sudo apt install stow` or `sudo yum install stow`
+- Windows: Use WSL or install via Chocolatey: `choco install stow`
+
+Everything else below is what the tracked configs expect. The split matters:
+**CLI tools and apps come from Homebrew; language toolchains never do.**
+
+### Via Homebrew
+
+| Tool | Formula / Cask | Required? | Used for |
+| --- | --- | --- | --- |
+| GNU Stow | `stow` | **Yes** | Symlinking packages into `$HOME` |
+| Ghostty | `--cask ghostty` | Yes | Terminal emulator |
+| Starship | `starship` | Yes | Shell prompt (`.zshrc`) |
+| Carapace | `carapace` | Yes | Shell completions (`.zshrc`) |
+| direnv | `direnv` | Yes | Per-directory env vars (`.zshrc`) |
+| OmniWM | `--cask omniwm` | Optional | Window manager, macOS 26+ Apple Silicon |
+| AeroSpace | `--cask aerospace` | Optional | Fallback window manager |
+| Zellij | `zellij` | Optional | Terminal workspaces; started on demand, not per shell |
+| libpq | `libpq` | Optional | `psql`/`pg_dump`/`pg_restore` - **client only**, no server |
+| Docker Desktop | `--cask docker-desktop` | Optional | Runs Postgres and any other servers |
+| GitHub CLI | `gh` | Optional | `gh` auth, SSH key upload, PRs |
+
+### Not via Homebrew - language toolchains
+
+| Language | Installer | Lands in | Shell wiring |
+| --- | --- | --- | --- |
+| Rust | [rustup.rs](https://rustup.rs) | `~/.cargo`, `~/.rustup` | `.zshenv` sources `~/.cargo/env` |
+| .NET | `dotnet-install.sh` | `~/.dotnet` | `.zshenv` sets `DOTNET_ROOT` |
+| Go | [go.dev](https://go.dev/dl/) tarball | `~/.local/go` | `.zshenv` sets `GOROOT`/`GOPATH` |
+| Node | [nvm](https://github.com/nvm-sh/nvm) | `~/.nvm` | `.zshrc` sources `nvm.sh` |
+
+See [Install Language Toolchains](#2-install-language-toolchains---not-via-homebrew)
+for the commands and the reasoning.
 
 ## Installation (macOS)
 
@@ -22,8 +54,56 @@ brew install --cask ghostty omniwm     # Terminal emulator and window manager
 brew install zellij starship carapace  # Terminal workspace, prompt, and completions
 brew install direnv                    # Per-directory environment variables
 brew install libpq                     # PostgreSQL client tools (psql, pg_dump, ...)
-brew install --cask docker             # Container runtime for databases/servers
+brew install --cask docker-desktop     # Container runtime for databases/servers
 ```
+
+### 2. Install Language Toolchains - NOT via Homebrew
+
+Rust, .NET, Go and Node are each installed with their **own official installer**,
+not Homebrew. Every one lands under `$HOME`, so none of them needs `sudo`, and
+each keeps its own version manager for switching releases per project - which is
+the point: Homebrew upgrades a toolchain out from under you on an unrelated
+`brew upgrade`, and pins you to whatever single version it packages.
+
+`.zshenv` and `.zshrc` expect these exact locations. Each block is guarded by a
+directory check, so a machine missing one of these toolchains is fine - the
+shell just skips it.
+
+```bash
+# Rust -> ~/.cargo, ~/.rustup
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# .NET SDK (LTS) -> ~/.dotnet
+curl -fsSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
+chmod +x dotnet-install.sh
+./dotnet-install.sh --channel LTS --install-dir "$HOME/.dotnet"
+
+# Go -> ~/.local/go   (GOPATH stays at ~/go)
+GOVER=$(curl -fsSL 'https://go.dev/VERSION?m=text' | head -1)
+curl -fsSL -o "$GOVER.darwin-arm64.tar.gz" "https://go.dev/dl/$GOVER.darwin-arm64.tar.gz"
+tar -C "$HOME/.local" -xzf "$GOVER.darwin-arm64.tar.gz"
+
+# Node via nvm -> ~/.nvm
+curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+nvm install --lts && nvm alias default 'lts/*'
+```
+
+| Toolchain | Installed to | Shell wiring | Why not Homebrew |
+| --- | --- | --- | --- |
+| Rust | `~/.cargo`, `~/.rustup` | `.zshenv` sources `~/.cargo/env` | Homebrew's `rustup` is keg-only, stores state in `~/.rustup`, and **never writes `~/.cargo/env`** - so `.zshenv` fails at startup and `cargo` is missing from `PATH` |
+| .NET | `~/.dotnet` | `.zshenv` sets `DOTNET_ROOT` + `PATH` | Keeps SDK/runtime versions under `dotnet-install.sh` control, side-by-side per channel |
+| Go | `~/.local/go` | `.zshenv` sets `GOROOT`, `GOPATH` | Official tarball; avoids `sudo` writes to `/usr/local/go` |
+| Node | `~/.nvm` | `.zshrc` sources `nvm.sh` | `nvm` switches versions per project; a Homebrew `node` would shadow it on `PATH` |
+
+Two gotchas worth knowing:
+
+- **nvm is a shell function, not a binary**, so it's initialised in `.zshrc`, not
+  `.zshenv`. It can't be a plain `PATH` export.
+- **If Homebrew's rustup is already installed**, back it out first or it will
+  conflict with the keg-only shims:
+  ```bash
+  brew uninstall rustup && rm -rf ~/.rustup /opt/homebrew/etc/rustup
+  ```
 
 ### Databases and other servers: Docker, not Homebrew services
 
@@ -47,13 +127,19 @@ organizations. [OrbStack](https://orbstack.dev/) (`brew install --cask orbstack`
 and [Colima](https://github.com/abiosoft/colima) (`brew install colima docker`)
 are drop-in alternatives that avoid that if it applies here.
 
+**Managed Macs:** cask installs copy an app into `/Applications` via `sudo`. On a
+machine with a managed sudo policy that demands a typed justification, Homebrew
+can't answer that prompt and the install fails with `sudo: no password was
+provided`. Run the cask installs yourself in an interactive terminal; the
+downloads are already cached, so the retry is quick.
+
 **Window manager:** OmniWM replaced AeroSpace as the window manager for this repo.
 The `aerospace-1monitor`/`aerospace-2monitor` packages are still tracked as a
 fallback - install `brew install --cask aerospace` instead of `omniwm` if you're
 going that route. OmniWM requires macOS 26 (Tahoe) or later on Apple Silicon;
 AeroSpace remains the option on Intel or older macOS.
 
-### 2. Clone This Repository
+### 3. Clone This Repository
 
 ```bash
 mkdir -p ~/Documents/Projects/kkbae
@@ -62,7 +148,7 @@ git clone git@github.com:kkbae-com/mySettings.git
 cd mySettings
 ```
 
-### 3. Deploy Configurations
+### 4. Deploy Configurations
 
 See the [Deploying Configurations](#deploying-configurations) section below for stow usage.
 
@@ -71,11 +157,11 @@ See the [Deploying Configurations](#deploying-configurations) section below for 
 Each configuration package has its own README with detailed installation instructions:
 
 - **ghostty** - Requires Ghostty terminal emulator (`brew install --cask ghostty`)
-- **zsh** - Requires Starship, Carapace, direnv, and Rust/Cargo. `libpq`
-  (`brew install libpq`) is optional but recommended - it provides `psql`/`pg_dump`/
-  `pg_restore`; it's keg-only, so `.zshenv` adds its `bin` to `PATH` explicitly and
-  no-ops if it isn't installed. Zellij is also optional - the shell no longer
-  auto-starts it
+- **zsh** - Requires Starship, Carapace and direnv. Every language toolchain it
+  wires up (Rust, .NET, Go, Node) is guarded by a directory check, so each is
+  optional and a missing one is silently skipped. `libpq` is optional but
+  recommended - keg-only, so `.zshenv` adds its `bin` to `PATH` explicitly.
+  Zellij is optional too; the shell no longer auto-starts it
 - **zellij** - Requires Zellij terminal workspace manager (`brew install zellij`).
   Optional; started on demand rather than per shell
 - **omniwm** - Requires OmniWM window manager (`brew install --cask omniwm`), macOS 26+
@@ -161,16 +247,42 @@ Mac/
    ```
 3. Deploy a specific package with explicit target:
    ```bash
-   stow -t ~ zsh         # Creates ~/.zshrc symlink
-   stow -t ~ git         # Creates ~/.gitconfig symlink
+   stow --no-folding -t ~ zsh         # Creates ~/.zshrc symlink
+   stow --no-folding -t ~ git         # Creates ~/.gitconfig symlink
    ```
 4. Deploy every package *except* the window managers (see the next section - the
    window manager packages are mutually exclusive, so `*/` is not safe here):
    ```bash
-   stow -t ~ ghostty git zellij zsh
+   stow --no-folding -t ~ ghostty git zellij zsh
    ```
 
 **Note:** The `-t ~` flag explicitly targets your home directory. Without it, stow creates symlinks in the parent directory of where you run it.
+
+### Always use `--no-folding`
+
+```bash
+stow --no-folding -t ~ <package>
+```
+
+By default stow "folds": when a target directory doesn't exist yet, it symlinks
+the whole directory instead of the files inside it. That points a live
+application directory straight at this git repo, so anything the app writes
+there lands in your working tree:
+
+| Without `--no-folding` | Consequence |
+| --- | --- |
+| `~/.config/omniwm` -> repo | OmniWM regenerates `settings.toml` **into the repo** |
+| `~/.config/zellij` -> repo | Zellij writes layouts/themes into the repo |
+| `~/Library/LaunchAgents` -> repo | *Any* app installing a login item writes into the repo |
+
+`--no-folding` creates real directories and symlinks only the tracked files, so
+those writes stay in `$HOME` where they belong. To fix an already-folded
+package, unstow and restow it:
+
+```bash
+stow -D -t ~ <package>
+stow --no-folding -t ~ <package>
+```
 
 ### Managing Multiple Configurations for the Same Tool
 
@@ -190,14 +302,14 @@ manager is the live example - three mutually exclusive packages:
 
 ```bash
 # Deploy the current default
-stow -t ~ omniwm
+stow --no-folding -t ~ omniwm
 
 # To switch to the AeroSpace fallback:
 # First quit OmniWM (menu bar icon, or via omniwmctl), then unstow it
 stow -D -t ~ omniwm
 
 # Then deploy one AeroSpace variant
-stow -t ~ aerospace-1monitor    # or aerospace-2monitor
+stow --no-folding -t ~ aerospace-1monitor    # or aerospace-2monitor
 aerospace reload-config
 ```
 
@@ -228,8 +340,8 @@ stow -D -t ~ zsh                   # Removes ~/.zshrc symlink
 1. Navigate to your operating system folder
 2. Create a package directory for the tool (e.g., `mkdir zsh`)
 3. Add configuration files in the structure they should appear in home directory
-4. Test with `stow -n -t ~ <package>` (dry run)
-5. Deploy with `stow -t ~ <package>`
+4. Test with `stow -n -v --no-folding -t ~ <package>` (dry run, shows each link)
+5. Deploy with `stow --no-folding -t ~ <package>`
 6. Document what each package does in a README.md inside the package
 7. Commit changes with descriptive messages
 

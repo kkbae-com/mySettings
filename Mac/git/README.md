@@ -23,7 +23,7 @@
 2. Deploy configuration:
    ```bash
    cd ~/Documents/Projects/kkbae/mySettings/Mac
-   stow -t ~ git
+   stow --no-folding -t ~ git
    ```
 
 3. Verify configuration:

@@ -28,13 +28,13 @@
 2. Deploy configuration:
    ```bash
    cd ~/Documents/Projects/kkbae/mySettings/Mac
-   stow -t ~ aerospace-2monitor
+   stow --no-folding -t ~ aerospace-2monitor
    ```
 
    **Note:** If you're switching from the 1-monitor configuration, remove it first:
    ```bash
    stow -D -t ~ aerospace-1monitor
-   stow -t ~ aerospace-2monitor
+   stow --no-folding -t ~ aerospace-2monitor
    ```
 
 3. Restart AeroSpace or run:
@@ -69,6 +69,6 @@ To switch back to single monitor setup:
 ```bash
 cd ~/Documents/Projects/kkbae/mySettings/Mac
 stow -D -t ~ aerospace-2monitor
-stow -t ~ aerospace-1monitor
+stow --no-folding -t ~ aerospace-1monitor
 aerospace reload-config
 ```

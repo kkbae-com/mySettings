@@ -1,3 +1,17 @@
 [user]
 	email = kmerecido@gmail.com
 	name = Karl Merecido
+
+[init]
+	defaultBranch = main
+
+# Work identity, applied only inside the work projects directory. The path is
+# untracked and machine-local (see .gitconfig-work.template) because not every
+# machine that stows this repo has a work identity - git silently ignores an
+# include whose path doesn't exist.
+#
+# The trailing slash matters: it makes this match the directory and everything
+# under it. Keep this block last - includes are applied in order, so a later
+# [user] would override it.
+[includeIf "gitdir:~/Documents/Projects/vervint/"]
+	path = ~/.gitconfig-work

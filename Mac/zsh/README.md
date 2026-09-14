@@ -22,7 +22,7 @@
 1. Deploy configuration:
    ```bash
    cd ~/Documents/Projects/kkbae/mySettings/Mac
-   stow -t ~ zsh
+   stow --no-folding -t ~ zsh
    ```
 
 2. Set up machine-local files:
