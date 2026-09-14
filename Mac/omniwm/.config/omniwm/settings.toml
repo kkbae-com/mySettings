@@ -577,11 +577,11 @@ id = "centerVisibleColumns"
 
 [[hotkeys]]
 binding = "Option+Shift+Right Arrow"
-id = "moveWindowToWorkspaceUp"
+id = "moveWindowToWorkspaceDown"
 
 [[hotkeys]]
 binding = "Option+Shift+Left Arrow"
-id = "moveWindowToWorkspaceDown"
+id = "moveWindowToWorkspaceUp"
 
 [[hotkeys]]
 binding = "Control+Option+Shift+Page Up"
