@@ -23,11 +23,28 @@
 
 2. Deploy configuration:
    ```bash
-   cd ~/Projects/mySettings/Mac
+   cd ~/Documents/Projects/kkbae/mySettings/Mac
    stow -t ~ zellij
    ```
 
 3. Restart Zellij or start a new session
+
+## Starting a session
+
+Zellij does **not** auto-start with the shell - most shells don't need a session,
+so it's started on demand:
+
+```bash
+zellij                      # new session
+zellij attach -c main       # attach to a session named "main", creating it if absent
+zellij ls                   # list running sessions
+```
+
+To auto-start it on every new shell instead, uncomment the
+`zellij setup --generate-auto-start zsh` line in `Mac/zsh/.zshrc` - or copy that
+line into `~/.zshrc.local` to enable it on one machine only. Two env vars pair
+with it: `ZELLIJ_AUTO_ATTACH=true` reuses an existing session rather than opening
+a new one each time, and `ZELLIJ_AUTO_EXIT=true` closes the shell when you detach.
 
 ## Configuration Highlights
 
@@ -56,5 +73,6 @@ The config defines custom keybindings for:
 
 ## Notes
 
-- Auto-starts in zsh (configured in `.zshrc`)
+- Auto-start in zsh is available but commented out in `.zshrc` - see
+  [Starting a session](#starting-a-session)
 - Uses KDL (KDL Document Language) for configuration

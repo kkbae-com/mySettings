@@ -21,7 +21,31 @@ brew install stow
 brew install --cask ghostty omniwm     # Terminal emulator and window manager
 brew install zellij starship carapace  # Terminal workspace, prompt, and completions
 brew install direnv                    # Per-directory environment variables
+brew install libpq                     # PostgreSQL client tools (psql, pg_dump, ...)
+brew install --cask docker             # Container runtime for databases/servers
 ```
+
+### Databases and other servers: Docker, not Homebrew services
+
+Servers - PostgreSQL included - run in **Docker containers**, not as Homebrew
+services. Homebrew installs only *client* tooling.
+
+That's why the list above has `brew install libpq` and not
+`brew install postgresql@NN`: the latter pulls in a server daemon this setup
+doesn't use. `psql`, `pg_dump`, `pg_restore` and `pg_isready` all come from
+`libpq` and connect to whatever is running in Docker. `libpq` is keg-only, so
+Homebrew doesn't link its binaries onto `PATH` - `.zshenv` adds its `bin`
+directory explicitly.
+
+Connection strings are machine-local - they depend on the container's role name
+and published port - so they belong in untracked `~/.zshenv.local`, not in the
+tracked `.zshenv`. See `.zshenv.local.template` for the `MONEYBAE_DATABASE_URL`
+starting point.
+
+**Licensing note:** Docker Desktop requires a paid subscription for larger
+organizations. [OrbStack](https://orbstack.dev/) (`brew install --cask orbstack`)
+and [Colima](https://github.com/abiosoft/colima) (`brew install colima docker`)
+are drop-in alternatives that avoid that if it applies here.
 
 **Window manager:** OmniWM replaced AeroSpace as the window manager for this repo.
 The `aerospace-1monitor`/`aerospace-2monitor` packages are still tracked as a
@@ -32,9 +56,9 @@ AeroSpace remains the option on Intel or older macOS.
 ### 2. Clone This Repository
 
 ```bash
-mkdir -p ~/Documents/Projects/mrcunninghamz
-cd ~/Documents/Projects/mrcunninghamz
-git clone https://github.com/mrcunninghamz/mySettings.git
+mkdir -p ~/Documents/Projects/kkbae
+cd ~/Documents/Projects/kkbae
+git clone git@github.com:kkbae-com/mySettings.git
 cd mySettings
 ```
 
@@ -47,10 +71,13 @@ See the [Deploying Configurations](#deploying-configurations) section below for 
 Each configuration package has its own README with detailed installation instructions:
 
 - **ghostty** - Requires Ghostty terminal emulator (`brew install --cask ghostty`)
-- **zsh** - Requires Zellij, Starship, Carapace, direnv, Rust/Cargo, and `postgresql`
-  (`brew install postgresql`) - it's keg-only, so `psql`/`pg_restore`/etc. aren't linked
-  onto `PATH` by default; `.zshenv` adds `$(brew --prefix postgresql)/bin` explicitly
-- **zellij** - Requires Zellij terminal workspace manager (`brew install zellij`)
+- **zsh** - Requires Starship, Carapace, direnv, and Rust/Cargo. `libpq`
+  (`brew install libpq`) is optional but recommended - it provides `psql`/`pg_dump`/
+  `pg_restore`; it's keg-only, so `.zshenv` adds its `bin` to `PATH` explicitly and
+  no-ops if it isn't installed. Zellij is also optional - the shell no longer
+  auto-starts it
+- **zellij** - Requires Zellij terminal workspace manager (`brew install zellij`).
+  Optional; started on demand rather than per shell
 - **omniwm** - Requires OmniWM window manager (`brew install --cask omniwm`), macOS 26+
   on Apple Silicon. Has extra first-run setup (separate Spaces per display, Accessibility
   and Input Monitoring permissions, removing the default generated config before stowing)
@@ -127,10 +154,10 @@ Mac/
 
 ### Deploying Configurations
 
-1. Clone this repository (recommended location: `~/Projects/mySettings`)
+1. Clone this repository (recommended location: `~/Documents/Projects/kkbae/mySettings`)
 2. Navigate to your OS-specific folder:
    ```bash
-   cd ~/Projects/mySettings/Mac  # or Windows, or Linux
+   cd ~/Documents/Projects/kkbae/mySettings/Mac  # or Windows, or Linux
    ```
 3. Deploy a specific package with explicit target:
    ```bash
@@ -191,7 +218,7 @@ window manager packages at once. Deploy packages selectively instead.
 ### Removing Configurations
 
 ```bash
-cd ~/Projects/mySettings/Mac
+cd ~/Documents/Projects/kkbae/mySettings/Mac
 stow -D -t ~ omniwm                # Removes omniwm symlinks
 stow -D -t ~ zsh                   # Removes ~/.zshrc symlink
 ```

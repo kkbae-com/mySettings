@@ -5,3 +5,8 @@
 #   cp Mac/zsh/.zshenv.local.template ~/.zshenv.local
 
 export TF_VAR_money_bae_db_admin_password="REPLACE_ME"
+
+# Connection string for the local money_bae database. Machine-local because the
+# role name and port depend on how you're running Postgres - with the Docker
+# setup, this matches whatever POSTGRES_USER / published port the container uses.
+export MONEYBAE_DATABASE_URL="postgres://postgres:REPLACE_ME@localhost:5432/money_bae"

@@ -6,7 +6,18 @@ compinit
 zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
 
 # Terminal Workspace: https://zellij.dev/documentation/integration.html
-eval "$(zellij setup --generate-auto-start zsh)"
+#
+# Auto-start is OPT-IN. Most shells don't need a Zellij session, so instead of
+# starting one on every new shell, run `zellij` (or `zellij attach -c main` to
+# reuse a persistent session) when you actually want one.
+#
+# To turn auto-start back on, uncomment the line below - either here, if every
+# machine sharing this repo should get it, or by copying the line into
+# ~/.zshrc.local to enable it on just this machine (see .zshrc.local.template).
+# ZELLIJ_AUTO_ATTACH=true reuses a session instead of creating a new one each
+# time; ZELLIJ_AUTO_EXIT=true closes the shell when you leave Zellij.
+#
+# eval "$(zellij setup --generate-auto-start zsh)"
 
 # Prompt: using Starship https://starship.rs/
 eval "$(starship init zsh)"

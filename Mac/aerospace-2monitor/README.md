@@ -27,7 +27,7 @@
 
 2. Deploy configuration:
    ```bash
-   cd ~/Projects/mySettings/Mac
+   cd ~/Documents/Projects/kkbae/mySettings/Mac
    stow -t ~ aerospace-2monitor
    ```
 
@@ -67,7 +67,7 @@ In addition to standard workspace navigation (alt-1 through alt-9), this configu
 
 To switch back to single monitor setup:
 ```bash
-cd ~/Projects/mySettings/Mac
+cd ~/Documents/Projects/kkbae/mySettings/Mac
 stow -D -t ~ aerospace-2monitor
 stow -t ~ aerospace-1monitor
 aerospace reload-config

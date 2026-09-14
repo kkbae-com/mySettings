@@ -26,7 +26,7 @@
 
 2. Deploy configuration:
    ```bash
-   cd ~/Projects/mySettings/Mac
+   cd ~/Documents/Projects/kkbae/mySettings/Mac
    stow -t ~ aerospace-1monitor
    ```
 

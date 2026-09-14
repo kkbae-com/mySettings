@@ -47,7 +47,7 @@
 
 5. **Deploy this repo's configuration over the default one:**
    ```bash
-   cd ~/Projects/mySettings/Mac
+   cd ~/Documents/Projects/kkbae/mySettings/Mac
    rm ~/.config/omniwm/settings.toml   # avoids a stow "existing target" conflict
    stow -t ~ omniwm
    ```
@@ -57,7 +57,7 @@
 ## Switching back to AeroSpace
 
 ```bash
-cd ~/Projects/mySettings/Mac
+cd ~/Documents/Projects/kkbae/mySettings/Mac
 stow -D -t ~ omniwm            # if omniwm's config was stowed
 # quit OmniWM from its menu bar icon, or via omniwmctl - check `omniwmctl --help`
 # for the exact quit/reload subcommand, upstream docs don't pin it down as of this writing
@@ -75,7 +75,7 @@ Set `start-at-login = true` back in the aerospace config once you're back on it 
 This requires `ipcEnabled = true` in `settings.toml` (already set) so `omniwmctl` can talk to the running app, and the LaunchAgent to keep a `omniwmctl watch display-changed --reconnect --exec ...` process alive across logins:
 
 ```bash
-cd ~/Projects/mySettings/Mac
+cd ~/Documents/Projects/kkbae/mySettings/Mac
 stow -R -t ~ omniwm   # symlinks the script and plist into place
 launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.mysettings.omniwm-sidecar-watch.plist
 ```
