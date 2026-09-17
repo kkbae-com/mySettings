@@ -28,7 +28,7 @@ Everything else below is what the tracked configs expect. The split matters:
 | libpq | `libpq` | Optional | `psql`/`pg_dump`/`pg_restore` - **client only**, no server |
 | Docker Desktop | `--cask docker-desktop` | Optional | Runs Postgres and any other servers |
 | GitHub CLI | `gh` | Optional | `gh` auth, SSH key upload, PRs |
-| AWS CLI | `awscli` | Optional | `aws sso login`, per-project profiles (see [AWS Configuration Per Project](#aws-configuration-per-project)) |
+| AWS CLI | `awscli` | Optional | `aws sso login`, per-project profiles (see [Per-Project Isolation: Cloud Config, MCP, and Secrets](#per-project-isolation-cloud-config-mcp-and-secrets)) |
 
 ### Not via Homebrew - language toolchains
 
@@ -213,38 +213,96 @@ counterpart if one exists, e.g. in `.zshenv`:
   running this repo should get it. If not, it belongs in the local file, not
   the template.
 
-## AWS Configuration Per Project
+## Per-Project Isolation: Cloud Config, MCP, and Secrets
 
-Client work (e.g. a project folder like `sharkninja`) authenticates via
-**AWS SSO** - no static IAM access keys, no `~/.aws/credentials`. The active
-profile switches automatically per directory using `direnv`, the same tool
-already used for other per-project env vars.
+Client engagements each live in their own top-level project folder, separate
+from any individual git repo. That top-level folder is **not itself a git
+repo** - it's a plain directory holding several real repos as subfolders
+(each with its own `.git` and remote), plus a few files - loaded
+per-directory by `direnv` - that scope cloud provider config, Claude Code,
+and MCP servers to that folder and everything under it:
 
-- **`~/.aws/config`** holds one `[profile <name>]` block per client, e.g.:
-  ```ini
-  [profile sharkninja]
-  sso_start_url  = https://<your-sso-portal>.awsapps.com/start
-  sso_region     = us-east-1
-  sso_account_id = 111111111111
-  sso_role_name  = <RoleName>
-  region         = us-east-1
-  output         = json
-  ```
-  These values (account ID, role name, SSO URL) aren't secrets, just
-  identifiers - unlike an access key, so unlike `~/.aws/credentials`, this
-  file is safe to keep tracked/shared if it's added as a package here later.
-- **Each project's own repo** (not this one) gets a `.envrc` setting
-  `export AWS_PROFILE=sharkninja`, then `direnv allow` once. `cd`-ing into
-  the project auto-selects its profile; leaving it restores the previous
-  `AWS_PROFILE` (or none).
-- **Logging in** is `aws sso login --profile sharkninja` - opens a browser,
-  then caches a short-lived session token under `~/.aws/sso/cache` and
-  `~/.aws/cli/cache`. Those caches are machine/session-specific and are
-  never tracked or stowed.
-- **No static keys**: `~/.aws/credentials` doesn't exist in this setup and
-  shouldn't be created. If a project ever needs long-lived IAM keys instead
-  of SSO, they go in that untracked file only - never in `~/.aws/config` and
-  never committed.
+```
+<client>/
+├── .envrc            # direnv: cloud profile, region, secrets - loaded per-directory
+├── .aws/config       # project-local cloud config (AWS shown; same idea for Azure, etc.) - no secrets
+├── .mcp.json         # MCP servers for this client, secrets pulled from env
+├── CLAUDE.md
+├── service-repo-1/   # actual git repo, own remote
+├── service-repo-2/   # actual git repo, own remote
+└── ...               # one folder per repo for this client
+```
+
+Because the umbrella folder is never a git repo, none of this can be
+accidentally committed - the isolation is physical (which directory you're
+in), not `.gitignore`. If any of these files ever end up *inside* one of the
+actual sub-repos instead of the shared parent folder, they must be
+`.gitignore`d there.
+
+### Cloud provider config: project-local override, not one global file
+
+Rather than one shared config file with every client's profiles mixed
+together, each project points its CLI at a project-local config via an env
+var override. AWS is the concrete example in use today, but the same
+pattern applies to any provider with an equivalent override (e.g. Azure CLI's
+`AZURE_CONFIG_DIR`):
+
+```bash
+# <client>/.envrc
+export AWS_REGION=<region>
+export AWS_PROFILE=<default-profile-for-this-client>
+export AWS_CONFIG_FILE="$PWD/.aws/config"
+```
+
+`<client>/.aws/config` then holds every SSO session/profile/role for that
+client. None of it is secret - just account IDs, role names, and SSO URLs -
+keeping it isolated per project is about not mixing clients' profiles
+together, not about hiding anything.
+
+Logging in: `aws sso login --profile <name>`, run from inside the project
+folder so `AWS_CONFIG_FILE` is already set by direnv. There's still no
+`~/.aws/credentials` (or provider equivalent) anywhere in this setup - no
+static long-lived keys, SSO only.
+
+### MCP servers: one `.mcp.json` per project
+
+Each project folder also gets its own `.mcp.json` for that client's MCP
+servers instead of a global one. Secret values are never written into
+`.mcp.json` directly - they're `${VAR}` references resolved from the
+environment `direnv` already loaded:
+
+```json
+{
+  "mcpServers": {
+    "example-server": {
+      "command": "npx",
+      "args": ["-y", "some-mcp-server"],
+      "env": {
+        "API_EMAIL": "you@client.com",
+        "API_TOKEN": "${EXAMPLE_API_TOKEN}"
+      }
+    }
+  }
+}
+```
+
+### Secrets live in the project's own `.envrc`, never in this repo
+
+The actual token values are plain `export`s in that project's `.envrc`:
+
+```bash
+export EXAMPLE_API_TOKEN="..."
+```
+
+- These live **only** on the machine, inside that project folder - never in
+  this (`mySettings`) repo, and never in any of the client's actual git
+  repos.
+- `direnv allow` once per project folder is what makes `cd`-ing in load them
+  (and `cd`-ing back out unload them) - this depends on `.zshrc`'s
+  `eval "$(direnv hook zsh)"`.
+- If a folder holding an `.envrc` like this is ever turned into (or nested
+  inside) a git repo, add `.envrc` to that repo's `.gitignore` immediately -
+  it is not written to be safe to commit.
 
 ## Structure
 
