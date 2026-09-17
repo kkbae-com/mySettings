@@ -28,6 +28,7 @@ Everything else below is what the tracked configs expect. The split matters:
 | libpq | `libpq` | Optional | `psql`/`pg_dump`/`pg_restore` - **client only**, no server |
 | Docker Desktop | `--cask docker-desktop` | Optional | Runs Postgres and any other servers |
 | GitHub CLI | `gh` | Optional | `gh` auth, SSH key upload, PRs |
+| AWS CLI | `awscli` | Optional | `aws sso login`, per-project profiles (see [AWS Configuration Per Project](#aws-configuration-per-project)) |
 
 ### Not via Homebrew - language toolchains
 
@@ -211,6 +212,39 @@ counterpart if one exists, e.g. in `.zshenv`:
 - Before adding something to a tracked file, ask whether every machine
   running this repo should get it. If not, it belongs in the local file, not
   the template.
+
+## AWS Configuration Per Project
+
+Client work (e.g. a project folder like `sharkninja`) authenticates via
+**AWS SSO** - no static IAM access keys, no `~/.aws/credentials`. The active
+profile switches automatically per directory using `direnv`, the same tool
+already used for other per-project env vars.
+
+- **`~/.aws/config`** holds one `[profile <name>]` block per client, e.g.:
+  ```ini
+  [profile sharkninja]
+  sso_start_url  = https://<your-sso-portal>.awsapps.com/start
+  sso_region     = us-east-1
+  sso_account_id = 111111111111
+  sso_role_name  = <RoleName>
+  region         = us-east-1
+  output         = json
+  ```
+  These values (account ID, role name, SSO URL) aren't secrets, just
+  identifiers - unlike an access key, so unlike `~/.aws/credentials`, this
+  file is safe to keep tracked/shared if it's added as a package here later.
+- **Each project's own repo** (not this one) gets a `.envrc` setting
+  `export AWS_PROFILE=sharkninja`, then `direnv allow` once. `cd`-ing into
+  the project auto-selects its profile; leaving it restores the previous
+  `AWS_PROFILE` (or none).
+- **Logging in** is `aws sso login --profile sharkninja` - opens a browser,
+  then caches a short-lived session token under `~/.aws/sso/cache` and
+  `~/.aws/cli/cache`. Those caches are machine/session-specific and are
+  never tracked or stowed.
+- **No static keys**: `~/.aws/credentials` doesn't exist in this setup and
+  shouldn't be created. If a project ever needs long-lived IAM keys instead
+  of SSO, they go in that untracked file only - never in `~/.aws/config` and
+  never committed.
 
 ## Structure
 
