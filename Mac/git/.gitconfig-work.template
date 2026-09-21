@@ -4,14 +4,19 @@
 #
 #   cp Mac/git/.gitconfig-work.template ~/.gitconfig-work
 #
-# It's pulled in by the [includeIf "gitdir:~/Documents/Projects/vervint/"] block
-# in .gitconfig, so it applies ONLY to repos under that directory. Clone work
-# repos there and the work identity is used automatically; everything else falls
-# back to the default identity in .gitconfig.
+# It's pulled in by an includeIf block you add to ~/.gitconfig-local (see
+# .gitconfig-local.template), e.g.:
+#
+#   [includeIf "gitdir:~/Documents/Projects/<employer>/"]
+#   	path = ~/.gitconfig-work
+#
+# so it applies ONLY to repos under that directory. Clone work repos there
+# and the work identity is used automatically; everything else falls back
+# to the default identity in .gitconfig.
 #
 # Verify which identity a repo resolves to:
 #   git -C <repo> config user.email
 
 [user]
-	email = REPLACE_ME@vervint.com
+	email = REPLACE_ME@example.com
 	name = Karl Merecido

@@ -1,0 +1,25 @@
+# Template for an additional per-client git identity.
+#
+# ~/.gitconfig-work (see .gitconfig-work.template) is the special case for
+# your current employer's identity. Use this template for any other
+# client/project that needs its own identity.
+#
+# 1. Copy this file to a machine-local, untracked path named for the client:
+#      cp Mac/git/.gitconfig-client.template ~/.gitconfig-<client>
+# 2. Fill in the identity below.
+# 3. Add a matching includeIf block to ~/.gitconfig-local (see
+#    .gitconfig-local.template - not .gitconfig itself, so the client's
+#    name never has to appear in this repo):
+#      [includeIf "gitdir:~/Documents/Projects/<client>/"]
+#      	path = ~/.gitconfig-<client>
+#
+# Like ~/.gitconfig-work, this file is never tracked or stowed, so a
+# `git pull` on another machine can't overwrite it and no client identity
+# leaks into this repo.
+#
+# Verify which identity a repo resolves to:
+#   git -C <repo> config user.email
+
+[user]
+	email = REPLACE_ME@example.com
+	name = Karl Merecido

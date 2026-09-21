@@ -1,0 +1,24 @@
+# Copy this file to ~/.gitconfig-local and add one includeIf block per
+# client/employer that needs its own git identity.
+#
+#   cp Mac/git/.gitconfig-local.template ~/.gitconfig-local
+#
+# ~/.gitconfig-local is untracked and never stowed/symlinked, so a
+# `git pull` on another machine can't overwrite it, and no client/employer
+# name ever needs to appear in this repo. It's pulled in by the
+# unconditional [include] in .gitconfig - git silently skips it if the file
+# doesn't exist, so a machine with no extra identities is fine as-is.
+#
+# For each client, point at an identity file created from
+# .gitconfig-client.template (or .gitconfig-work.template for your current
+# employer):
+#
+#   [includeIf "gitdir:~/Documents/Projects/<client>/"]
+#   	path = ~/.gitconfig-<client>
+#
+# The trailing slash matters - it makes this match the directory and
+# everything under it. Order matters too: includes apply top-to-bottom, so
+# if paths ever nest, put the more specific block last.
+#
+# Verify which identity a repo resolves to:
+#   git -C <repo> config user.email
