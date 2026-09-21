@@ -4,26 +4,9 @@ monitorNiriOverrides = []
 monitorOrientationOverrides = []
 schemaVersion = 3
 
-[[monitorDwindleOverrides]]
-id = "36321AC9-E6A0-41F8-8541-41A2BB333C1B"
-monitorName = "Macbook"
-monitorDisplayUUID = "37D8832A-2D66-02CA-B9F7-8F30A301B230"
-singleWindowFit = "fill"
-
-[[monitorDwindleOverrides]]
-id = "E3E61B9D-E874-4346-9931-70EC791CEBF7"
-monitorName = "HP Z27"
-monitorDisplayUUID = "29C2055D-5F0F-4083-9E08-2B13363F11ED"
-singleWindowFit = "fill"
-
-[[monitorDwindleOverrides]]
-id = "5892C4C1-55CA-40A3-AC6A-F68A9AFB93C3"
-monitorName = "Sidecar Display (AirPlay)"
-monitorDisplayUUID = "20C899DA-E030-4F52-9323-EB77EF7F9E08"
-singleWindowFit = "fill"
-
 [appearance]
 mode = "dark"
+tabRailAppIcons = false
 
 [borders]
 enabled = true
@@ -83,10 +66,17 @@ fingerCount = 3
 invertDirection = true
 mouseMoveModifierKey = "option"
 mouseResizeModifierKey = "option"
+overviewGestureEnabled = false
+overviewGestureFingerCount = 4
 scrollEnabled = true
 scrollModifierKey = "optionShift"
 scrollSensitivity = 5.0
 trackpadScrollStyle = "snap"
+windowGestureSensitivity = 1.0
+windowMoveEnabled = false
+windowMoveFingerCount = 4
+windowResizeEnabled = false
+windowResizeFingerCount = 3
 workspaceSwipeAxis = "vertical"
 workspaceSwipeEnabled = false
 workspaceSwipeFingerCount = 3
@@ -186,16 +176,20 @@ excludedBundleIDs = []
 height = 24.0
 hideEmptyWorkspaces = false
 hideInNativeFullscreen = false
-notchActiveZoneWidth = 180.0
-notchMode = "splitActiveLeft"
+notchActiveZoneWidth = 100.0
+notchMode = "moveBelowMenuBar"
 position = "overlappingMenuBar"
 reserveLayoutSpace = false
 revealHoldMilliseconds = 200.0
-revealModifier = "off"
+revealModifier = "option"
+showAccentHighlights = true
 showFloatingWindows = false
+showItemBackgrounds = true
 showLabels = true
+solidBlackBackground = false
 systemStatsButton = false
-windowLevel = "popup"
+transparentBackground = false
+windowLevel = "status"
 xOffset = 0.0
 yOffset = 0.0
 
@@ -576,12 +570,12 @@ binding = "Unassigned"
 id = "centerVisibleColumns"
 
 [[hotkeys]]
-binding = "Option+Shift+Right Arrow"
-id = "moveWindowToWorkspaceDown"
-
-[[hotkeys]]
 binding = "Option+Shift+Left Arrow"
 id = "moveWindowToWorkspaceUp"
+
+[[hotkeys]]
+binding = "Option+Shift+Right Arrow"
+id = "moveWindowToWorkspaceDown"
 
 [[hotkeys]]
 binding = "Control+Option+Shift+Page Up"
@@ -1030,6 +1024,24 @@ id = "toggleOverview"
 [[hotkeys]]
 binding = "Unassigned"
 id = "toggleSystemStats"
+
+[[monitorDwindleOverrides]]
+id = "36321AC9-E6A0-41F8-8541-41A2BB333C1B"
+monitorDisplayUUID = "37D8832A-2D66-02CA-B9F7-8F30A301B230"
+monitorName = "Macbook"
+singleWindowFit = "fill"
+
+[[monitorDwindleOverrides]]
+id = "E3E61B9D-E874-4346-9931-70EC791CEBF7"
+monitorDisplayUUID = "29C2055D-5F0F-4083-9E08-2B13363F11ED"
+monitorName = "HP Z27"
+singleWindowFit = "fill"
+
+[[monitorDwindleOverrides]]
+id = "5892C4C1-55CA-40A3-AC6A-F68A9AFB93C3"
+monitorDisplayUUID = "20C899DA-E030-4F52-9323-EB77EF7F9E08"
+monitorName = "Sidecar Display (AirPlay)"
+singleWindowFit = "fill"
 
 [[workspaces]]
 id = "AD36F001-C57E-41A5-AC1D-DF5249D007F0"
