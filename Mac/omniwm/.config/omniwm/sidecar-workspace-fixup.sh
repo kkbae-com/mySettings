@@ -20,7 +20,7 @@
 OMNIWMCTL=/Applications/OmniWM.app/Contents/MacOS/omniwmctl
 
 "$OMNIWMCTL" query displays --format json 2>/dev/null | python3 -c '
-import json, subprocess, sys
+import json, os, subprocess, sys
 
 OMNIWMCTL = "'"$OMNIWMCTL"'"
 
@@ -37,6 +37,19 @@ if built_in is None or external is None:
     sys.exit(0)
 
 sidecar_connected = "Sidecar" in external.get("name", "")
+
+# display-changed also fires on wake, monitor sleep, resolution changes, etc.
+# Only act when Sidecar actually connects or disconnects; every other event
+# is left alone so windows/tiles are not shuffled.
+STATE = os.path.expanduser("~/.cache/omniwm-sidecar-state")
+state = "sidecar" if sidecar_connected else "no-sidecar"
+try:
+    with open(STATE) as f:
+        if f.read().strip() == state:
+            sys.exit(0)
+except OSError:
+    pass
+
 target_1_5 = external if sidecar_connected else built_in
 target_6_9 = built_in if sidecar_connected else external
 
@@ -66,4 +79,8 @@ def nudge(ws_names, target):
 
 nudge([str(n) for n in range(1, 6)], target_1_5)
 nudge([str(n) for n in range(6, 10)], target_6_9)
+
+os.makedirs(os.path.dirname(STATE), exist_ok=True)
+with open(STATE, "w") as f:
+    f.write(state)
 '
