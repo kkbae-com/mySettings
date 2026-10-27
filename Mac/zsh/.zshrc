@@ -40,3 +40,8 @@ export NVM_DIR="$HOME/.nvm"
 
 # Machine-local additions - not tracked, see .zshrc.local.template
 [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local"
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/karlmerecido/.docker/completions $fpath)
+autoload -Uz compinit
+(( ${+_comps[docker]} )) || compinit
+# End of Docker CLI completions
