@@ -107,7 +107,8 @@ This prints the display's `id` (CGDirectDisplayID), `uuid` (what goes in `monito
 - **Layout toggle:** `Option+Shift+L` switches the current workspace between niri and dwindle
 - **Borders:** enabled, width 2, dark blue focus indicator
 - **Gaps:** none (inner and outer gap size 0)
-- **Workspace bar:** overlaps the menu bar (`position = "overlappingMenuBar"`), splits around the notch to the left (`notchMode = "splitActiveLeft"`)
+- **Workspace bar:** docked below the menu bar (`position = "belowMenuBar"`), auto-hidden and revealed by holding Option (`autoHide = true`, `revealModifier = "option"`)
+  - **Known bug (0.8.0):** `belowMenuBar` still renders overlapping the menu bar instead of docking under it - a cosmetic-only layout cache bug. Already fixed upstream (OmniNull/OmniWM PR #1070, merged 2026-10-31) but not yet in a release as of 2026-11-17. Re-check after the next `brew upgrade --cask omniwm`; no local workaround found. If it's still unfixed and bothersome, `workspaceBar.enabled = false` is the fallback.
 - **Quake terminal:** `Option+\`` toggles it; centered, 50% width/height, standard blur with `opacity = 0.7`
 - **Gestures:** 3-finger trackpad, scroll-to-resize on `Option+Shift`, workspace swipe disabled
 - **Key hotkeys:**
